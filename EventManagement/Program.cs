@@ -1,4 +1,7 @@
 
+using EventManagement_BusinessObjects;
+using Microsoft.EntityFrameworkCore;
+
 namespace EventManagement
 {
     public class Program
@@ -6,6 +9,9 @@ namespace EventManagement
         public static void Main(string[] args)
         {
             var builder = WebApplication.CreateBuilder(args);
+
+            builder.Services.AddDbContext<EventManagementDbContext>(options =>
+    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
             // Add services to the container.
 

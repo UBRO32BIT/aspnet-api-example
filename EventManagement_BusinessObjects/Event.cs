@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace EventManagement_BusinessObjects
 {
-    public class Event
+    public class Event : BaseEntity
     {
         [Required(ErrorMessage = "Event name is required")]
         [StringLength(100, ErrorMessage = "Event name can not exceed 100 characters")]
