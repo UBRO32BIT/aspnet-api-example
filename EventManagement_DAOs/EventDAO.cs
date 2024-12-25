@@ -16,7 +16,7 @@ namespace EventManagement_DAOs
             _context = context;
         }
 
-        public List<Event> GetAllAsync()
+        public List<Event> GetAll()
         {
             try
             {
@@ -45,22 +45,25 @@ namespace EventManagement_DAOs
             try
             {
                 _context.Add(eventEntity);
+                _context.SaveChanges();
             }
             catch (Exception ex)
             {
                 throw new Exception(ex.Message, ex);
             }
         }
-        public void Update(Event eventEntity)
+        public void Update(string id, Event eventEntity)
         {
             try
             {
-                var existedEvent = _context.Events.Where(_e => _e.Id.ToString().Equals(eventEntity.Id.ToString())).FirstOrDefault();
+                var existedEvent = _context.Events.Where(_e => _e.Id.ToString().Equals(id)).FirstOrDefault();
                 if (existedEvent == null)
                 {
                     throw new Exception("Event not found");
                 }
-                _context.Update(eventEntity);
+                existedEvent.Name = eventEntity.Name;
+                existedEvent.Description = eventEntity.Description;
+                _context.Update(existedEvent);
                 _context.SaveChanges();
             }
             catch (Exception ex)

@@ -16,9 +16,9 @@ namespace EventManagement_BusinessObjects
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public DateTime CreatedAt { get; set; }
 
-        [DatabaseGenerated(DatabaseGeneratedOption.Computed)]
         public DateTime UpdatedAt { get; set; }
+
         [DatabaseGenerated(DatabaseGeneratedOption.Computed)]
-        public Boolean IsDeleted { get; set; }
+        public bool IsDeleted { get; set; }
     }
 }

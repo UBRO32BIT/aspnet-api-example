@@ -3,11 +3,15 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.8.34408.163
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EventManagement", "EventManagement\EventManagement.csproj", "{5A361A85-4B36-441B-8770-3830149BC5A6}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EventManagement", "EventManagement\EventManagement.csproj", "{5A361A85-4B36-441B-8770-3830149BC5A6}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EventManagement_BusinessObjects", "EventManagement_BusinessObjects\EventManagement_BusinessObjects.csproj", "{7B9CFF01-3DB1-474E-ACD8-4A968AF21127}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EventManagement_BusinessObjects", "EventManagement_BusinessObjects\EventManagement_BusinessObjects.csproj", "{7B9CFF01-3DB1-474E-ACD8-4A968AF21127}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EventManagement_DAOs", "EventManagement_DAOs\EventManagement_DAOs.csproj", "{A9E3D27F-D1C4-413E-83EC-2C8D69A5AA7F}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EventManagement_DAOs", "EventManagement_DAOs\EventManagement_DAOs.csproj", "{A9E3D27F-D1C4-413E-83EC-2C8D69A5AA7F}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EventManagement_Services", "EventManagement_Services\EventManagement_Services.csproj", "{DD9A7244-D463-486D-BB96-2EFA0FE5C443}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EventManagement_Repositories", "EventManagement_Repositories\EventManagement_Repositories.csproj", "{94975AAD-5B7A-4D7D-A431-8D7FF61FE092}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -27,6 +31,14 @@ Global
 		{A9E3D27F-D1C4-413E-83EC-2C8D69A5AA7F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A9E3D27F-D1C4-413E-83EC-2C8D69A5AA7F}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{A9E3D27F-D1C4-413E-83EC-2C8D69A5AA7F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DD9A7244-D463-486D-BB96-2EFA0FE5C443}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DD9A7244-D463-486D-BB96-2EFA0FE5C443}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DD9A7244-D463-486D-BB96-2EFA0FE5C443}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DD9A7244-D463-486D-BB96-2EFA0FE5C443}.Release|Any CPU.Build.0 = Release|Any CPU
+		{94975AAD-5B7A-4D7D-A431-8D7FF61FE092}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{94975AAD-5B7A-4D7D-A431-8D7FF61FE092}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{94975AAD-5B7A-4D7D-A431-8D7FF61FE092}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{94975AAD-5B7A-4D7D-A431-8D7FF61FE092}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

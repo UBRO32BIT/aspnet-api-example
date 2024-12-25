@@ -1,5 +1,10 @@
 
 using EventManagement_BusinessObjects;
+using EventManagement_DAOs;
+using EventManagement_Repositories;
+using EventManagement_Repositories.Interfaces;
+using EventManagement_Services;
+using EventManagement_Services.Interfaces;
 using Microsoft.EntityFrameworkCore;
 
 namespace EventManagement
@@ -19,6 +24,10 @@ namespace EventManagement
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
+
+            builder.Services.AddScoped<IEventService, EventService>();
+            builder.Services.AddScoped<IEventRepository, EventRepository>();
+            builder.Services.AddScoped<EventDAO>();
 
             var app = builder.Build();
 
