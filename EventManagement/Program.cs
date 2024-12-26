@@ -1,4 +1,5 @@
 
+using EventManagement.Middlewares;
 using EventManagement_BusinessObjects;
 using EventManagement_DAOs;
 using EventManagement_Repositories;
@@ -30,6 +31,8 @@ namespace EventManagement
             builder.Services.AddScoped<EventDAO>();
 
             var app = builder.Build();
+
+            app.UseMiddleware<ExceptionMiddleware>();
 
             // Configure the HTTP request pipeline.
             if (app.Environment.IsDevelopment())

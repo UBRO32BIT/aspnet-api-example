@@ -35,12 +35,18 @@ namespace EventManagement_Services
 
         public void Update(string id, UpdateEventRequestDTO eventDto)
         {
-            Event eventEntity = new Event()
+            var existingEvent = _eventRepository.GetById(id);
+            if (existingEvent == null)
             {
-                Name = eventDto.Name,
-                Description = eventDto.Description,
-            };
-            _eventRepository.Update(id, eventEntity);
+                throw new Exception($"Event with ID {id} not found");
+            }
+
+            existingEvent.Name = eventDto.Name;
+            existingEvent.Description = eventDto.Description;
+            existingEvent.HostedAt = eventDto.HostedAt;
+            existingEvent.Slots = eventDto.Slots;
+
+            _eventRepository.Update(id, existingEvent);
         }
     }
 }

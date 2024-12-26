@@ -6,7 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace EventManagement_BusinessObjects
+namespace EventManagement_BusinessObjects.Common
 {
     public class BaseEntity
     {

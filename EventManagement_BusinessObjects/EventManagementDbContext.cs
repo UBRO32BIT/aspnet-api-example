@@ -1,11 +1,14 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using EventManagement_BusinessObjects.Common;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection.Emit;
 using System.Text;
+using System.Text.Json;
 using System.Threading.Tasks;
+using System.Xml;
 
 
 namespace EventManagement_BusinessObjects
@@ -19,6 +22,7 @@ namespace EventManagement_BusinessObjects
 
         // DbSet for the Event entity
         public DbSet<Event> Events { get; set; }
+        public DbSet<AuditEntry> AuditEntries { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -34,6 +38,9 @@ namespace EventManagement_BusinessObjects
                 entity.Property(e => e.Description)
                       .IsRequired();
             });
+            modelBuilder.Entity<AuditEntry>().Property(ae => ae.Changes).HasConversion(
+        value => JsonSerializer.Serialize(value, (JsonSerializerOptions)null),
+        serializedValue => JsonSerializer.Deserialize<Dictionary<string, object>>(serializedValue, (JsonSerializerOptions)null));
         }
 
         public override int SaveChanges()
@@ -55,7 +62,10 @@ namespace EventManagement_BusinessObjects
                 entity.UpdatedAt = DateTime.UtcNow;
             }
 
-            return base.SaveChanges();
+            var auditEntries = OnBeforeSaveChanges();
+            var result = base.SaveChanges();
+            OnAfterSaveChanges(auditEntries);
+            return result;
         }
 
         public override async Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
@@ -78,6 +88,63 @@ namespace EventManagement_BusinessObjects
             }
 
             return await base.SaveChangesAsync(cancellationToken);
+        }
+
+        private List<AuditEntry> OnBeforeSaveChanges()
+        {
+            ChangeTracker.DetectChanges();
+            var entries = new List<AuditEntry>();
+
+            foreach (var entry in ChangeTracker.Entries())
+            {
+                // Dot not audit entities that are not tracked, not changed, or not of type IAuditable
+                if (entry.State == EntityState.Detached || entry.State == EntityState.Unchanged || !(entry.Entity is IAuditable))
+                    continue;
+
+                var auditEntry = new AuditEntry
+                {
+                    ActionType = entry.State == EntityState.Added ? "INSERT" : entry.State == EntityState.Deleted ? "DELETE" : "UPDATE",
+                    EntityId = entry.Properties.Single(p => p.Metadata.IsPrimaryKey()).CurrentValue.ToString(),
+                    EntityName = entry.Metadata.ClrType.Name,
+                    Username = "",
+                    TimeStamp = DateTime.UtcNow,
+                    Changes = entry.Properties.Select(p => new { p.Metadata.Name, p.CurrentValue }).ToDictionary(i => i.Name, i => i.CurrentValue),
+
+                    // TempProperties are properties that are only generated on save, e.g. ID's
+                    // These properties will be set correctly after the audited entity has been saved
+                    TempProperties = entry.Properties.Where(p => p.IsTemporary).ToList(),
+                };
+
+                entries.Add(auditEntry);
+            }
+
+            return entries;
+        }
+
+        private void OnAfterSaveChanges(List<AuditEntry> auditEntries)
+        {
+            if (auditEntries == null || auditEntries.Count == 0)
+                return;
+
+            // For each temporary property in each audit entry - update the value in the audit entry to the actual (generated) value
+            foreach (var entry in auditEntries)
+            {
+                foreach (var prop in entry.TempProperties)
+                {
+                    if (prop.Metadata.IsPrimaryKey())
+                    {
+                        entry.EntityId = prop.CurrentValue.ToString();
+                        entry.Changes[prop.Metadata.Name] = prop.CurrentValue;
+                    }
+                    else
+                    {
+                        entry.Changes[prop.Metadata.Name] = prop.CurrentValue;
+                    }
+                }
+            }
+
+            AuditEntries.AddRange(auditEntries);
+            SaveChanges();
         }
     }
 }

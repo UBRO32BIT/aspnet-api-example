@@ -13,5 +13,9 @@ namespace EventManagement_Services.DTOs.Event
         public string Name { get; set; }
         [Required]
         public string Description { get; set; }
+        [Required]
+        public DateTime HostedAt { get; set; }
+        [Required]
+        public int Slots { get; set; }
     }
 }

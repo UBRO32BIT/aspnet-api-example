@@ -8,11 +8,11 @@ namespace EventManagement.Controllers
 {
     [Route("api/events")]
     [ApiController]
-    public class EventController : ControllerBase
+    public class EventsController : ControllerBase
     {
         private readonly IEventService _eventService;
 
-        public EventController(IEventService eventService)
+        public EventsController(IEventService eventService)
         {
             _eventService = eventService;
         }
