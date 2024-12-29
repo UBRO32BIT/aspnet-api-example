@@ -1,6 +1,8 @@
 ﻿using EventManagement_BusinessObjects;
 using EventManagement_Services.DTOs.Event;
 using EventManagement_Services.Interfaces;
+using EventManagementAPI.Accessors;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -11,10 +13,12 @@ namespace EventManagement.Controllers
     public class EventsController : ControllerBase
     {
         private readonly IEventService _eventService;
+        private readonly UserIdAccessor _userIdAccessor;
 
-        public EventsController(IEventService eventService)
+        public EventsController(IEventService eventService, UserIdAccessor userIdAccessor)
         {
             _eventService = eventService;
+            _userIdAccessor = userIdAccessor;
         }
 
         [HttpGet]
@@ -41,6 +45,7 @@ namespace EventManagement.Controllers
         }
 
         [HttpPost]
+        [Authorize]
         [Consumes("application/json")]
         public IActionResult Create([FromBody] CreateEventRequestDTO eventPayload)
         {
@@ -49,11 +54,13 @@ namespace EventManagement.Controllers
                 return BadRequest(ModelState);
             }
 
-            _eventService.Add(eventPayload);
+            var userId = _userIdAccessor.GetCurrentUserId();
+            _eventService.Add(eventPayload, userId);
             return Ok("Added successfully");
         }
 
         [HttpPut("{id}")]
+        [Authorize]
         [Consumes("application/json")]
         public IActionResult Update(string id, [FromBody] UpdateEventRequestDTO eventPayload)
         {
@@ -66,14 +73,17 @@ namespace EventManagement.Controllers
             {
                 return BadRequest(ModelState);
             }
-            _eventService.Update(id, eventPayload);
+            var userId = _userIdAccessor.GetCurrentUserId();
+            _eventService.Update(id, eventPayload, userId);
             return Ok("Update successfully");
         }
 
         [HttpDelete("{id}")]
+        [Authorize]
         public IActionResult Delete(string id)
         {
-            _eventService.Delete(id);
+            var userId = _userIdAccessor.GetCurrentUserId();
+            _eventService.Delete(id, userId);
             return NoContent();
         }
     }

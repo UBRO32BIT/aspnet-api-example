@@ -5,6 +5,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using EventManagement_BusinessObjects.Common;
+using EventManagement_BusinessObjects.Identity;
+using Microsoft.AspNetCore.Identity;
 
 namespace EventManagement_BusinessObjects
 {
@@ -16,6 +18,8 @@ namespace EventManagement_BusinessObjects
         [Required(ErrorMessage = "Description is required")]
         [StringLength(3000, ErrorMessage = "Event description can not exceed 3000 characters")]
         public string Description { get; set; }
+        //public string OwnerId { get; set; }
+        //public virtual ApplicationUser Owner { get; set; }
         public DateTime HostedAt { get; set; }
         [Required(ErrorMessage = "Slots is required")]
         public int Slots { get; set; }

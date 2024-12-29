@@ -12,8 +12,8 @@ namespace EventManagement_Services.Interfaces
     {
         public Event GetById(string id);
         public List<Event> GetAll();
-        public void Add(CreateEventRequestDTO eventDto);
-        public void Update(string id, UpdateEventRequestDTO eventDto);
-        public void Delete(string id);
+        public void Add(CreateEventRequestDTO eventDto, string userId);
+        public void Update(string id, UpdateEventRequestDTO eventDto, string userId);
+        public void Delete(string id, string userId);
     }
 }

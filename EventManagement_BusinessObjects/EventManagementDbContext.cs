@@ -1,26 +1,20 @@
 ﻿using EventManagement_BusinessObjects.Common;
+using EventManagement_BusinessObjects.Identity;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Configuration;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Reflection.Emit;
-using System.Text;
 using System.Text.Json;
-using System.Threading.Tasks;
-using System.Xml;
 
 
 namespace EventManagement_BusinessObjects
 {
-    public partial class EventManagementDbContext : DbContext
+    public partial class EventManagementDbContext : IdentityDbContext<ApplicationUser>
     {
         public EventManagementDbContext(DbContextOptions<EventManagementDbContext> options)
             : base(options)
         {
         }
 
-        // DbSet for the Event entity
+        public DbSet<ApplicationUser> ApplicationUsers => Set<ApplicationUser>();
         public DbSet<Event> Events { get; set; }
         public DbSet<AuditEntry> AuditEntries { get; set; }
 
@@ -31,6 +25,10 @@ namespace EventManagement_BusinessObjects
             modelBuilder.Entity<Event>(entity =>
             {
                 entity.HasKey(e => e.Id);
+                //entity.HasOne(e => e.Owner)
+                //    .WithMany(u => u.Events)
+                //    .HasForeignKey(e => e.OwnerId)
+                //    .OnDelete(DeleteBehavior.Cascade);
                 entity.Property(e => e.Name)
                       .IsRequired()
                       .HasMaxLength(100);

@@ -4,6 +4,7 @@ using EventManagement_BusinessObjects;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace EventManagement_BusinessObjects.Migrations
 {
     [DbContext(typeof(EventManagementDbContext))]
-    partial class EventManagementDbContextModelSnapshot : ModelSnapshot
+    [Migration("20241229131732_UpdateIdentityV2")]
+    partial class UpdateIdentityV2
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
