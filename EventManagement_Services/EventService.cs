@@ -57,7 +57,27 @@ namespace EventManagement_Services
 
         public List<Event> GetAll() => _eventRepository.GetAll();
 
-        public Event GetById(string id) => _eventRepository.GetById(id);
+        public EventResponseDTO GetById(string id)
+        {
+            var eventEntity = _eventRepository.GetById(id);
+            if (eventEntity == null)
+            {
+                throw new KeyNotFoundException("Event not found");
+            }
+
+            // Manual mapping
+            var eventDto = new EventResponseDTO
+            {
+                Id = eventEntity.Id,
+                Name = eventEntity.Name,
+                Description = eventEntity.Description,
+                CreatedAt = eventEntity.CreatedAt,
+                UpdatedAt = eventEntity.UpdatedAt,
+                IsDeleted = eventEntity.IsDeleted
+            };
+
+            return eventDto;
+        }
 
         public void Update(string id, UpdateEventRequestDTO eventDto, string currentUserId)
         {

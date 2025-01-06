@@ -1,20 +1,25 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Text.Json.Serialization;
+using System.Runtime.Serialization;
 using System.Threading.Tasks;
 
-namespace EventManagement_Services.DTOs.Event
+namespace EventManagement_WCFExamples.DataContracts
 {
-    public class EventResponseDTO
+    [DataContract]
+    public class Event
     {
+        [DataMember]
         public Guid Id { get; set; }
+        [DataMember]
         public string Name { get; set; }
+        [DataMember]
         public string Description { get; set; }
+        [DataMember]
         public DateTime CreatedAt { get; set; }
+        [DataMember]
         public DateTime UpdatedAt { get; set; }
-        [JsonIgnore]
+        [DataMember]
         public Boolean IsDeleted { get; set; }
     }
 }

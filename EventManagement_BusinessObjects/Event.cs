@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -18,8 +19,9 @@ namespace EventManagement_BusinessObjects
         [Required(ErrorMessage = "Description is required")]
         [StringLength(3000, ErrorMessage = "Event description can not exceed 3000 characters")]
         public string Description { get; set; }
-        //public string OwnerId { get; set; }
-        //public virtual ApplicationUser Owner { get; set; }
+        [ForeignKey("ApplicationUser")]
+        public string OwnerId { get; set; }
+        public virtual ApplicationUser Owner { get; set; }
         public DateTime HostedAt { get; set; }
         [Required(ErrorMessage = "Slots is required")]
         public int Slots { get; set; }

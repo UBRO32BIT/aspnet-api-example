@@ -25,14 +25,15 @@ namespace EventManagement_BusinessObjects
             modelBuilder.Entity<Event>(entity =>
             {
                 entity.HasKey(e => e.Id);
-                //entity.HasOne(e => e.Owner)
-                //    .WithMany(u => u.Events)
-                //    .HasForeignKey(e => e.OwnerId)
-                //    .OnDelete(DeleteBehavior.Cascade);
+                entity.HasOne(e => e.Owner)
+                    .WithMany()
+                    .HasForeignKey(e => e.OwnerId)
+                    .OnDelete(DeleteBehavior.Restrict);
                 entity.Property(e => e.Name)
                       .IsRequired()
                       .HasMaxLength(100);
-
+                entity.Property(e => e.OwnerId)
+                      .HasMaxLength(450);
                 entity.Property(e => e.Description)
                       .IsRequired();
             });
