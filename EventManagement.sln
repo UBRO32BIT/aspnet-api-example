@@ -17,7 +17,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EventManagement_ODataExampl
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EventManagement_WCFExamples", "EventManagement_WCFExamples\EventManagement_WCFExamples.csproj", "{6D14DD9C-A5F2-45E2-935A-375FCB99D7D6}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EventManagement_gRPCExamples", "EventManagement_gRPCExamples\EventManagement_gRPCExamples.csproj", "{A3ED8D3B-D50D-42A8-944A-0C6229020D34}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EventManagement_gRPCExamples", "EventManagement_gRPCExamples\EventManagement_gRPCExamples.csproj", "{A3ED8D3B-D50D-42A8-944A-0C6229020D34}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

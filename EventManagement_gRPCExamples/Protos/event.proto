@@ -1,0 +1,32 @@
+syntax = "proto3";
+
+option csharp_namespace = "EventManagement_gRPCExamples.Protos";
+
+service Event {
+  // Sends a greeting
+  rpc GetEvents (EmptyRequest) returns (EventListResponse);
+  rpc GetEventById (GetEventByIdRequest) returns (EventResponse);
+}
+
+// EventResponse message definition
+message EventResponse {
+  string id = 1;              // Guid as a string
+  string name = 2;            // Name of the event
+  string description = 3;     // Description of the event
+  string created_at = 4;      // ISO 8601 formatted DateTime
+  string updated_at = 5;      // ISO 8601 formatted DateTime
+  bool is_deleted = 6;        // Soft-delete flag
+}
+
+message EventListResponse {
+	repeated EventResponse events = 1;
+}
+
+message EmptyRequest {
+
+}
+
+// The request message containing the user's name.
+message GetEventByIdRequest {
+  string id = 1;
+}

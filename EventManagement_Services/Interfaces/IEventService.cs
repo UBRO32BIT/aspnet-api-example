@@ -11,7 +11,7 @@ namespace EventManagement_Services.Interfaces
     public interface IEventService
     {
         public EventResponseDTO GetById(string id);
-        public List<Event> GetAll();
+        public List<EventResponseDTO> GetAll();
         public void Add(CreateEventRequestDTO eventDto, string userId);
         public void Update(string id, UpdateEventRequestDTO eventDto, string userId);
         public void Delete(string id, string userId);

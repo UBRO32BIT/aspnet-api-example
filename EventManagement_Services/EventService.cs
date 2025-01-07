@@ -55,7 +55,19 @@ namespace EventManagement_Services
             _eventRepository.Delete(id);
         }
 
-        public List<Event> GetAll() => _eventRepository.GetAll();
+        public List<EventResponseDTO> GetAll()
+        {
+            var events = _eventRepository.GetAll();
+            return events.Select(e => new EventResponseDTO
+            {
+                Id = e.Id,
+                Name = e.Name,
+                Description = e.Description,
+                CreatedAt = e.CreatedAt,
+                UpdatedAt = e.UpdatedAt,
+                IsDeleted = e.IsDeleted
+            }).ToList();
+        }
 
         public EventResponseDTO GetById(string id)
         {
