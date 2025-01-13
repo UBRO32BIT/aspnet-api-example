@@ -1,5 +1,4 @@
 using EventManagement_BusinessObjects;
-using EventManagement_DAOs;
 using EventManagement_Repositories.Interfaces;
 using EventManagement_Repositories;
 using EventManagement_Services.Interfaces;
@@ -21,8 +20,8 @@ namespace EventManagement_ODataExample
             builder.Services.AddSwaggerGen();
 
             builder.Services.AddScoped<IEventService, EventService>();
-            builder.Services.AddScoped<IEventRepository, EventRepository>();
-            builder.Services.AddScoped<EventDAO>();
+            builder.Services.AddScoped(typeof(BaseDAO<>));
+            builder.Services.AddScoped(typeof(IBaseRepository<>), typeof(BaseRepository<>));
 
             builder.Services.AddDbContext<EventManagementDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));

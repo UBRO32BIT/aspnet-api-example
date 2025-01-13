@@ -1,5 +1,4 @@
 using EventManagement_BusinessObjects;
-using EventManagement_DAOs;
 using EventManagement_gRPCExamples.Services;
 using EventManagement_Repositories.Interfaces;
 using EventManagement_Repositories;
@@ -62,8 +61,8 @@ namespace EventManagement_gRPCExamples
 
             builder.Services.AddScoped<IJWTTokenService, JwtTokenService>();
             builder.Services.AddScoped<IEventService, EventService>();
-            builder.Services.AddScoped<IEventRepository, EventRepository>();
-            builder.Services.AddScoped<EventDAO>();
+            builder.Services.AddScoped(typeof(BaseDAO<>));
+            builder.Services.AddScoped(typeof(IBaseRepository<>), typeof(BaseRepository<>));
 
             var app = builder.Build();
 

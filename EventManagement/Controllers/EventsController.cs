@@ -24,7 +24,7 @@ namespace EventManagement.Controllers
         [HttpGet]
         public IActionResult GetAll([FromQuery] string? searchString)
         {
-            var events = _eventService.GetAll();
+            var events = _eventService.GetAllAsync().Result;
             if (searchString == null)
             {
                 return Ok(events);
@@ -35,7 +35,7 @@ namespace EventManagement.Controllers
         [HttpGet("{id}")]
         public IActionResult GetById(string id)
         {
-            var result = _eventService.GetById(id);
+            var result = _eventService.GetByIdAsync(id).Result;
             if (result == null)
             {
                 return NotFound($"Event with ID {id} not found");
@@ -55,7 +55,7 @@ namespace EventManagement.Controllers
             }
 
             var userId = _userIdAccessor.GetCurrentUserId();
-            _eventService.Add(eventPayload, userId);
+            _eventService.AddAsync(eventPayload, userId).Wait();
             return Ok("Added successfully");
         }
 
@@ -64,7 +64,7 @@ namespace EventManagement.Controllers
         [Consumes("application/json")]
         public IActionResult Update(string id, [FromBody] UpdateEventRequestDTO eventPayload)
         {
-            var existingEvent = _eventService.GetById(id);
+            var existingEvent = _eventService.GetByIdAsync(id).Result;
             if (existingEvent == null)
             {
                 return NotFound("Event not found");
@@ -74,7 +74,7 @@ namespace EventManagement.Controllers
                 return BadRequest(ModelState);
             }
             var userId = _userIdAccessor.GetCurrentUserId();
-            _eventService.Update(id, eventPayload, userId);
+            _eventService.UpdateAsync(id, eventPayload, userId);
             return Ok("Update successfully");
         }
 
@@ -83,7 +83,7 @@ namespace EventManagement.Controllers
         public IActionResult Delete(string id)
         {
             var userId = _userIdAccessor.GetCurrentUserId();
-            _eventService.Delete(id, userId);
+            _eventService.DeleteAsync(id, userId);
             return NoContent();
         }
     }

@@ -10,10 +10,10 @@ namespace EventManagement_Services.Interfaces
 {
     public interface IEventService
     {
-        public EventResponseDTO GetById(string id);
-        public List<EventResponseDTO> GetAll();
-        public void Add(CreateEventRequestDTO eventDto, string userId);
-        public void Update(string id, UpdateEventRequestDTO eventDto, string userId);
-        public void Delete(string id, string userId);
+        public Task AddAsync(CreateEventRequestDTO eventDto, string userId);
+        public Task DeleteAsync(string id, string userId);
+        public Task<List<EventResponseDTO>> GetAllAsync();
+        public Task<EventResponseDTO> GetByIdAsync(string id);
+        public Task UpdateAsync(string id, UpdateEventRequestDTO eventDto, string currentUserId);
     }
 }

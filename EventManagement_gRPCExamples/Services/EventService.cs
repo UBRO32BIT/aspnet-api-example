@@ -17,7 +17,7 @@ namespace EventManagement_gRPCExamples.Services
 
         public override Task<EventResponse> GetEventById(GetEventByIdRequest request, ServerCallContext context)
         {
-            var result = _eventService.GetById(request.Id);
+            var result = _eventService.GetByIdAsync(request.Id).Result;
             EventResponse eventResponse = new EventResponse() {
                 Id = result.Id.ToString(),
                 Name = result.Name,
@@ -31,7 +31,7 @@ namespace EventManagement_gRPCExamples.Services
 
         public override Task<EventListResponse> GetEvents(EmptyRequest request, ServerCallContext context)
         {
-            var result = _eventService.GetAll();
+            var result = _eventService.GetAllAsync().Result;
             var dtos = result.Select(e => new EventResponse
             {
                 Id = e.Id.ToString(),

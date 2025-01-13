@@ -2,17 +2,21 @@
 using EventManagement.Middlewares;
 using EventManagement_BusinessObjects;
 using EventManagement_BusinessObjects.Identity;
-using EventManagement_DAOs;
 using EventManagement_Repositories;
 using EventManagement_Repositories.Interfaces;
 using EventManagement_Services;
+using EventManagement_Services.DTOs.Event;
 using EventManagement_Services.Interfaces;
 using EventManagementAPI.Accessors;
+using EventManagementAPI.Validators;
+using FluentValidation;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using Microsoft.IdentityModel.Tokens;
+using System;
 using System.Text;
 
 namespace EventManagement
@@ -63,7 +67,7 @@ namespace EventManagement
                     Scheme = "Bearer",
                     BearerFormat = "JWT",
                     In = Microsoft.OpenApi.Models.ParameterLocation.Header,
-                    Description = "Enter 'Bearer' [space] and then your token in the text input below.\n\nExample: \"Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9\""
+                    Description = "Enter your token in the text input below.\n\nExample: \"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9\""
                 });
                 options.AddSecurityRequirement(new Microsoft.OpenApi.Models.OpenApiSecurityRequirement
                 {
@@ -81,11 +85,13 @@ namespace EventManagement
                 });
             });
 
+            builder.Services.AddScoped<IValidator<CreateEventRequestDTO>, EventValidator>();
             builder.Services.AddScoped<IJWTTokenService, JwtTokenService>();
             builder.Services.AddScoped<IEventService, EventService>();
-            builder.Services.AddScoped<IEventRepository, EventRepository>();
+            builder.Services.AddScoped<IEventInvitationService, EventInvitationService>();
+            builder.Services.AddScoped(typeof(BaseDAO<>));
+            builder.Services.AddScoped(typeof(IBaseRepository<>), typeof(BaseRepository<>));
             builder.Services.AddScoped<UserIdAccessor>();
-            builder.Services.AddScoped<EventDAO>();
 
             var app = builder.Build();
 

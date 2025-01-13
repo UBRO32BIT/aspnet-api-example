@@ -9,13 +9,10 @@ namespace EventManagement_Services.DTOs.Event
 {
     public class CreateEventRequestDTO
     {
-        [Required]
         public string Name { get; set; }
-        [Required]
         public string Description { get; set; }
-        [Required]
         public DateTime HostedAt { get; set; }
-        [Required]
+        public DateTime? EndDate { get; set; }
         public int Slots { get; set; }
     }
 }

@@ -23,8 +23,10 @@ namespace EventManagement_BusinessObjects
         public string OwnerId { get; set; }
         public virtual ApplicationUser Owner { get; set; }
         public DateTime HostedAt { get; set; }
+        public DateTime? EndDate { get; set; }
         [Required(ErrorMessage = "Slots is required")]
         public int Slots { get; set; }
         public int Views { get; set; }
+        public Boolean isPublic { get; set; }
     }
 }

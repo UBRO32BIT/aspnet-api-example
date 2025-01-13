@@ -15,49 +15,53 @@ namespace EventManagement_Services
     public class EventService : IEventService
     {
         private readonly UserManager<ApplicationUser> _userManager;
-        private readonly IEventRepository _eventRepository;
-        public EventService(IEventRepository eventRepository, UserManager<ApplicationUser> userManager)
+        private readonly IBaseRepository<Event> _eventRepository;
+
+        public EventService(IBaseRepository<Event> eventRepository, UserManager<ApplicationUser> userManager)
         {
-            _eventRepository = eventRepository;
-            _userManager = userManager;
+            _eventRepository = eventRepository ?? throw new ArgumentNullException(nameof(eventRepository));
+            _userManager = userManager ?? throw new ArgumentNullException(nameof(userManager));
         }
 
-        public void Add(CreateEventRequestDTO eventDto, string userId)
+        public async Task AddAsync(CreateEventRequestDTO eventDto, string userId)
         {
-            var currentUser = _userManager.FindByIdAsync(userId).Result;
+            var currentUser = await _userManager.FindByIdAsync(userId);
             if (currentUser == null)
             {
-                throw new Exception("current user is null");
+                throw new Exception("Current user is null");
             }
-            Event eventEntity = new Event() {
+
+            var eventEntity = new Event
+            {
                 Name = eventDto.Name,
                 Description = eventDto.Description,
-                //Owner = currentUser,
-                //OwnerId = userId,
+                Owner = currentUser,
+                OwnerId = userId,
             };
-            _eventRepository.Add(eventEntity);
+
+            await _eventRepository.AddAsync(eventEntity);
         }
 
-        public void Delete(string id, string userId)
+        public async Task DeleteAsync(string id, string userId)
         {
-            var existingEvent = _eventRepository.GetById(id);
+            var existingEvent = await _eventRepository.GetAsync(Guid.Parse(id));
             if (existingEvent == null)
             {
                 throw new Exception($"Event with ID {id} not found");
             }
 
-            var existingUser = _userManager.FindByIdAsync(userId).Result;
+            var existingUser = await _userManager.FindByIdAsync(userId);
             if (existingUser == null)
             {
-                throw new Exception("current user is null");
+                throw new Exception("Current user is null");
             }
 
-            _eventRepository.Delete(id);
+            await _eventRepository.DeleteAsync(existingEvent.Id);
         }
 
-        public List<EventResponseDTO> GetAll()
+        public async Task<List<EventResponseDTO>> GetAllAsync()
         {
-            var events = _eventRepository.GetAll();
+            var events = await _eventRepository.GetAllAsync();
             return events.Select(e => new EventResponseDTO
             {
                 Id = e.Id,
@@ -69,16 +73,15 @@ namespace EventManagement_Services
             }).ToList();
         }
 
-        public EventResponseDTO GetById(string id)
+        public async Task<EventResponseDTO> GetByIdAsync(string id)
         {
-            var eventEntity = _eventRepository.GetById(id);
+            var eventEntity = await _eventRepository.GetAsync(Guid.Parse(id));
             if (eventEntity == null)
             {
                 throw new KeyNotFoundException("Event not found");
             }
 
-            // Manual mapping
-            var eventDto = new EventResponseDTO
+            return new EventResponseDTO
             {
                 Id = eventEntity.Id,
                 Name = eventEntity.Name,
@@ -87,34 +90,28 @@ namespace EventManagement_Services
                 UpdatedAt = eventEntity.UpdatedAt,
                 IsDeleted = eventEntity.IsDeleted
             };
-
-            return eventDto;
         }
 
-        public void Update(string id, UpdateEventRequestDTO eventDto, string currentUserId)
+        public async Task UpdateAsync(string id, UpdateEventRequestDTO eventDto, string currentUserId)
         {
-            var existingEvent = _eventRepository.GetById(id);
+            var existingEvent = await _eventRepository.GetAsync(Guid.Parse(id));
             if (existingEvent == null)
             {
                 throw new Exception($"Event with ID {id} not found");
             }
 
-            var existingUser = _userManager.FindByIdAsync(currentUserId).Result;
+            var existingUser = await _userManager.FindByIdAsync(currentUserId);
             if (existingUser == null)
             {
-                throw new Exception("current user is null");
+                throw new Exception("Current user is null");
             }
-            //if (!existingUser.Equals(existingEvent.OwnerId))
-            //{
-            //    throw new Exception("current user is not the owner of the event");
-            //}
 
             existingEvent.Name = eventDto.Name;
             existingEvent.Description = eventDto.Description;
             existingEvent.HostedAt = eventDto.HostedAt;
             existingEvent.Slots = eventDto.Slots;
 
-            _eventRepository.Update(id, existingEvent);
+            await _eventRepository.SaveChangesAsync();
         }
     }
 }

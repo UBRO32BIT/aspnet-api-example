@@ -21,7 +21,7 @@ namespace EventManagement_WCFExamples.ServiceContracts.Implementations
         }
         public Event GetEventById(string id)
         {
-            EventResponseDTO result = _eventService.GetById(id);
+            EventResponseDTO result = _eventService.GetByIdAsync(id).Result;
             return new Event() {
                 Id = result.Id,
                 Name = result.Name,

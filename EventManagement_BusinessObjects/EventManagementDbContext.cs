@@ -1,5 +1,6 @@
 ﻿using EventManagement_BusinessObjects.Common;
 using EventManagement_BusinessObjects.Identity;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using System.Text.Json;
@@ -16,11 +17,50 @@ namespace EventManagement_BusinessObjects
 
         public DbSet<ApplicationUser> ApplicationUsers => Set<ApplicationUser>();
         public DbSet<Event> Events { get; set; }
+        public DbSet<TicketGroup> TicketGroups { get; set; }
+        public DbSet<Ticket> Ticket { get; set; }
+        public DbSet<EventInvitation> EventInvitations { get; set; }
         public DbSet<AuditEntry> AuditEntries { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
+
+            //Seeding a  'Administrator' role to AspNetRoles table
+            modelBuilder.Entity<IdentityRole>().HasData(new IdentityRole { Id = "2c5e174e-3b0e-446f-86af-483d56fd7210", Name = "Administrator", NormalizedName = "ADMINISTRATOR".ToUpper() });
+            modelBuilder.Entity<IdentityRole>().HasData(new IdentityRole { Id = "dd779af5-4c29-40de-a284-4e02b54757f0", Name = "User", NormalizedName = "USER".ToUpper() });
+
+
+            //a hasher to hash the password before seeding the user to the db
+            var hasher = new PasswordHasher<ApplicationUser>();
+
+
+            //Seeding the User to AspNetUsers table
+            modelBuilder.Entity<ApplicationUser>(entity =>
+            {
+                entity.Property(e => e.AuthenticationType)
+                      .HasConversion<int>()
+                      .IsRequired();
+                entity.HasData(
+                    new ApplicationUser
+                    {
+                        Id = "8e445865-a24d-4543-a6c6-9443d048cdb9",
+                        UserName = "admin",
+                        NormalizedUserName = "SUPERADMIN",
+                        Email = "admin@32mine.net",
+                        PasswordHash = hasher.HashPassword(null, "Pa$$w0rd"),
+                        AuthenticationType = Enum.AuthenticationType.Local
+                    }
+                );
+            });
+
+            modelBuilder.Entity<IdentityUserRole<string>>().HasData(
+                new IdentityUserRole<string>
+                {
+                    RoleId = "2c5e174e-3b0e-446f-86af-483d56fd7210",
+                    UserId = "8e445865-a24d-4543-a6c6-9443d048cdb9"
+                }
+            );
 
             modelBuilder.Entity<Event>(entity =>
             {
@@ -36,6 +76,25 @@ namespace EventManagement_BusinessObjects
                       .HasMaxLength(450);
                 entity.Property(e => e.Description)
                       .IsRequired();
+                entity.Property(e => e.isPublic)
+                      .HasDefaultValue(false);
+            });
+            modelBuilder.Entity<EventInvitation>(entity =>
+            {
+                entity.HasKey(e => e.Id);
+                entity.HasOne(i => i.Invitor).WithMany().HasForeignKey(i => i.InvitorId).OnDelete(DeleteBehavior.Restrict);
+                entity.HasOne(i => i.Event).WithMany().HasForeignKey(i => i.EventId).OnDelete(DeleteBehavior.Restrict);
+            });
+            modelBuilder.Entity<TicketGroup>(entity =>
+            {
+                entity.HasKey(g => g.Id);
+            });
+            modelBuilder.Entity<Ticket>(entity =>
+            {
+                entity.HasKey(t =>  t.Id);
+                entity.HasOne(t => t.Owner).WithMany().HasForeignKey(t => t.OwnerId).OnDelete(DeleteBehavior.Restrict);
+                entity.HasOne(t => t.TicketGroup).WithMany().HasForeignKey(t => t.TicketGroupId).OnDelete(DeleteBehavior.Restrict);
+                entity.HasOne(t => t.Event).WithMany().HasForeignKey(t => t.EventId).OnDelete(DeleteBehavior.Restrict);
             });
             modelBuilder.Entity<AuditEntry>().Property(ae => ae.Changes).HasConversion(
         value => JsonSerializer.Serialize(value, (JsonSerializerOptions)null),

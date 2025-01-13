@@ -17,14 +17,14 @@ namespace EventManagement_ODataExample.Controllers
         [EnableQuery]
         public ActionResult<IEnumerable<Event>> Get()
         {
-            var events = _eventService.GetAll();
+            var events = _eventService.GetAllAsync().Result;
             return Ok(events);
         }
 
         [EnableQuery]
         public ActionResult<Event> Get([FromODataUri] Guid key)
         {
-            var result = _eventService.GetById(key.ToString());
+            var result = _eventService.GetByIdAsync(key.ToString()).Result;
             if (result == null)
             {
                 return NotFound($"resource with id {key} not found");
