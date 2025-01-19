@@ -7,7 +7,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\EventManagement_DAOs\EventManagement_DAOs.csproj" />
+    <ProjectReference Include="..\EventManagement_BusinessObjects\EventManagement_BusinessObjects.csproj" />
   </ItemGroup>
 
 </Project>

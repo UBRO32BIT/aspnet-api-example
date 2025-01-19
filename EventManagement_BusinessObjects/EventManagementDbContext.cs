@@ -3,6 +3,7 @@ using EventManagement_BusinessObjects.Identity;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 using System.Text.Json;
 
 
@@ -10,6 +11,7 @@ namespace EventManagement_BusinessObjects
 {
     public partial class EventManagementDbContext : IdentityDbContext<ApplicationUser>
     {
+        public EventManagementDbContext() { }
         public EventManagementDbContext(DbContextOptions<EventManagementDbContext> options)
             : base(options)
         {

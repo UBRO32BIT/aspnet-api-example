@@ -1,6 +1,5 @@
 ﻿using EventManagement_BusinessObjects.Identity;
 using EventManagement_BusinessObjects;
-using EventManagement_Repositories.Interfaces;
 using EventManagement_Services.DTOs.Invitation;
 using EventManagement_Services.Interfaces;
 using Microsoft.AspNetCore.Identity;
@@ -9,20 +8,24 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using EventManagement_Repositories;
+using EventManagement_Services.DTOs.User;
 
 namespace EventManagement_Services
 {
     public class EventInvitationService : IEventInvitationService
     {
-        private readonly IBaseRepository<EventInvitation> _invitationRepository;
-        private readonly IBaseRepository<Event> _eventRepository;
+        private UnitOfWork<EventManagementDbContext> _unitOfWork;
+        private readonly EventInvitationRepository _invitationRepository;
+        private readonly EventRepository _eventRepository;
         private readonly UserManager<ApplicationUser> _userManager;
 
-        public EventInvitationService(IBaseRepository<EventInvitation> invitationRepository, UserManager<ApplicationUser> userManager, IBaseRepository<Event> eventRepository)
+        public EventInvitationService(UserManager<ApplicationUser> userManager)
         {
-            _invitationRepository = invitationRepository ?? throw new ArgumentNullException(nameof(invitationRepository));
+            _unitOfWork = new UnitOfWork<EventManagementDbContext>();
+            _invitationRepository = new EventInvitationRepository(_unitOfWork);
             _userManager = userManager ?? throw new ArgumentNullException(nameof(userManager));
-            _eventRepository = eventRepository;
+            _eventRepository = new EventRepository(_unitOfWork);
         }
 
         public async Task AddAsync(CreateInvitationRequestDTO invitationDto, string userId)
@@ -54,6 +57,7 @@ namespace EventManagement_Services
                 Event = targetEvent,
                 InvitorId = userId,
                 Invitor = currentUser,
+                IsDeleted = false,
             };
 
             await _invitationRepository.AddAsync(invitation);
@@ -78,7 +82,7 @@ namespace EventManagement_Services
 
         public async Task<List<InvitationResponseDTO>> GetAllAsync()
         {
-            var invitations = await _invitationRepository.GetAllAsync();
+            var invitations = await _invitationRepository.GetInvitationsAsync();
             return invitations.Select(i => new InvitationResponseDTO
             {
                 Id = i.Id,
@@ -86,7 +90,20 @@ namespace EventManagement_Services
                 Slots = i.Slots,
                 ExpirationAt = i.ExpirationAt,
                 EventId = i.EventId,
-                InvitorId = i.InvitorId
+                Event = new DTOs.Event.EventResponseDTO()
+                {
+                    Id = i.Event.Id,
+                    Name = i.Event.Name,
+                    Description = i.Event.Description,
+                    CreatedAt = i.CreatedAt,
+                    UpdatedAt = i.UpdatedAt,
+                },
+                InvitorId = i.InvitorId,
+                Invitor = new UserDTO()
+                {
+                    Id = i.Invitor.Id,
+                    UserName = i.Invitor.UserName,
+                }
             }).ToList();
         }
 

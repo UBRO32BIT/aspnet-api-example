@@ -1,4 +1,7 @@
-﻿using System;
+﻿using EventManagement_BusinessObjects.Identity;
+using EventManagement_Services.DTOs.Event;
+using EventManagement_Services.DTOs.User;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -14,5 +17,7 @@ namespace EventManagement_Services.DTOs.Invitation
         public DateTime ExpirationAt { get; set; }
         public Guid EventId { get; set; }
         public string InvitorId { get; set; }
+        public UserDTO Invitor {  get; set; }
+        public EventResponseDTO Event { get; set; }
     }
 }

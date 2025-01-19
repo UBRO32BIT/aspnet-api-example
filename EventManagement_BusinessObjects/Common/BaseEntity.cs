@@ -18,7 +18,7 @@ namespace EventManagement_BusinessObjects.Common
 
         public DateTime UpdatedAt { get; set; }
 
-        [DatabaseGenerated(DatabaseGeneratedOption.Computed)]
+        [DatabaseGenerated(DatabaseGeneratedOption.None)]
         public bool IsDeleted { get; set; }
     }
 }

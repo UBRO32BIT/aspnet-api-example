@@ -3,7 +3,6 @@ using EventManagement.Middlewares;
 using EventManagement_BusinessObjects;
 using EventManagement_BusinessObjects.Identity;
 using EventManagement_Repositories;
-using EventManagement_Repositories.Interfaces;
 using EventManagement_Services;
 using EventManagement_Services.DTOs.Event;
 using EventManagement_Services.Interfaces;
@@ -28,7 +27,7 @@ namespace EventManagement
             var builder = WebApplication.CreateBuilder(args);
 
             builder.Services.AddDbContext<EventManagementDbContext>(options =>
-    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+                options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")).LogTo(Console.WriteLine, LogLevel.Information));
 
             // Add services to the container.
             builder.Services.AddHttpContextAccessor();
@@ -89,8 +88,8 @@ namespace EventManagement
             builder.Services.AddScoped<IJWTTokenService, JwtTokenService>();
             builder.Services.AddScoped<IEventService, EventService>();
             builder.Services.AddScoped<IEventInvitationService, EventInvitationService>();
-            builder.Services.AddScoped(typeof(BaseDAO<>));
-            builder.Services.AddScoped(typeof(IBaseRepository<>), typeof(BaseRepository<>));
+            builder.Services.AddScoped(typeof(EventRepository));
+            builder.Services.AddScoped(typeof(EventInvitationRepository));
             builder.Services.AddScoped<UserIdAccessor>();
 
             var app = builder.Build();

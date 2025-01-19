@@ -7,8 +7,8 @@ using System.Threading.Tasks;
 
 public class BaseDAO<TEntity> where TEntity : BaseEntity
 {
-    private readonly EventManagementDbContext _context;
-    private readonly DbSet<TEntity> _dbSet;
+    protected readonly EventManagementDbContext _context;
+    protected readonly DbSet<TEntity> _dbSet;
 
     public BaseDAO(EventManagementDbContext context)
     {

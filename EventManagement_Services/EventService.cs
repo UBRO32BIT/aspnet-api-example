@@ -1,6 +1,6 @@
 ﻿using EventManagement_BusinessObjects;
 using EventManagement_BusinessObjects.Identity;
-using EventManagement_Repositories.Interfaces;
+using EventManagement_Repositories;
 using EventManagement_Services.DTOs.Event;
 using EventManagement_Services.Interfaces;
 using Microsoft.AspNetCore.Identity;
@@ -14,32 +14,44 @@ namespace EventManagement_Services
 {
     public class EventService : IEventService
     {
+        private readonly UnitOfWork<EventManagementDbContext> _unitOfWork;
         private readonly UserManager<ApplicationUser> _userManager;
-        private readonly IBaseRepository<Event> _eventRepository;
+        private readonly EventRepository _eventRepository;
+        private UnitOfWork<EventManagementDbContext> unitOfWork = new UnitOfWork<EventManagementDbContext>();
 
-        public EventService(IBaseRepository<Event> eventRepository, UserManager<ApplicationUser> userManager)
+        public EventService(UserManager<ApplicationUser> userManager)
         {
-            _eventRepository = eventRepository ?? throw new ArgumentNullException(nameof(eventRepository));
+            _unitOfWork = new UnitOfWork<EventManagementDbContext>();
+            _eventRepository = new EventRepository(_unitOfWork);
             _userManager = userManager ?? throw new ArgumentNullException(nameof(userManager));
         }
 
         public async Task AddAsync(CreateEventRequestDTO eventDto, string userId)
         {
-            var currentUser = await _userManager.FindByIdAsync(userId);
-            if (currentUser == null)
+            try
             {
-                throw new Exception("Current user is null");
+                var currentUser = await _userManager.FindByIdAsync(userId);
+                if (currentUser == null)
+                {
+                    throw new Exception("Current user is null");
+                }
+
+                var eventEntity = new Event
+                {
+                    Name = eventDto.Name,
+                    Description = eventDto.Description,
+                    Owner = currentUser,
+                    OwnerId = userId,
+                };
+
+                await _eventRepository.AddAsync(eventEntity);
+                unitOfWork.Save();
+                unitOfWork.Commit();
             }
-
-            var eventEntity = new Event
+            catch (Exception ex)
             {
-                Name = eventDto.Name,
-                Description = eventDto.Description,
-                Owner = currentUser,
-                OwnerId = userId,
-            };
-
-            await _eventRepository.AddAsync(eventEntity);
+                unitOfWork.Rollback();
+            }
         }
 
         public async Task DeleteAsync(string id, string userId)
@@ -61,7 +73,7 @@ namespace EventManagement_Services
 
         public async Task<List<EventResponseDTO>> GetAllAsync()
         {
-            var events = await _eventRepository.GetAllAsync();
+            var events = await _eventRepository.GetEventsAsync();
             return events.Select(e => new EventResponseDTO
             {
                 Id = e.Id,
